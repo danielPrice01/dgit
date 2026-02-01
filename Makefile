@@ -1,7 +1,7 @@
 .PHONY: all clean
 
-CC := clang
-CFLAGS := -O2 -Wall -Wextra -pedantic -std=c11
+CC := gcc
+CFLAGS := -O2 -Wall -Wextra -pedantic -std=c11 -D_GNU_SOURCE
 RM := rm -f
 
 TARGET := dgit

@@ -5,14 +5,6 @@
 #include "typedefs.h"
 #include "utils.h"
 
-/************
-  CONSTANTS
- ***********/
-
-static const char* ignore_dirent[] = {".", "..", ".dgit"};
-static size_t num_ignored_dirents =
-    sizeof(ignore_dirent) / sizeof(ignore_dirent[0]);
-
 /***************************
   PRIMARY FUNCTION HANDLERS
  **************************/

@@ -8,6 +8,18 @@
 #include "SHA1.h"
 #include "utils.h"
 
+/*************
+ * CONSTANTS *
+ ************/
+
+static const char* ignore_dirent[] = {".", "..", ".dgit"};
+static size_t num_ignored_dirents =
+    sizeof(ignore_dirent) / sizeof(ignore_dirent[0]);
+
+/********************
+ * HELPER FUNCTIONS *
+ *******************/
+
 static inline int entry_ignored(char* dirent) {
   for (size_t i = 0; i < num_ignored_dirents; ++i) {
     if (str_equal(ignore_dirent[i], dirent)) {
@@ -58,7 +70,6 @@ int handle_hash_object(char* path, char* file_type, int print_hash) {
   FILE* in = fdopen(fd, "rb");
   if (in == NULL) {
     fprintf(stderr, "Failed to open file\n");
-    fclose(in);
     return -1;
   }
 
@@ -67,7 +78,7 @@ int handle_hash_object(char* path, char* file_type, int print_hash) {
   FILE* out = fopen("./.dgit/objects/tmp", "wb");
   if (out == NULL) {
     fprintf(stderr, "Failed to create file\n");
-    fclose(out);
+    fclose(in);
     return -1;
   }
 
@@ -233,6 +244,11 @@ int handle_cat_file(char* path) {
 }
 
 int handle_write_tree(char* directory) {
+  if (strlen(directory) >= 128) {
+    fprintf(stderr, "Directory name too large %s\n", directory);
+    return -1;
+  }
+
   DIR* d;
   struct dirent* dir;
 
@@ -252,7 +268,7 @@ int handle_write_tree(char* directory) {
     printf("Name %s. ", dir->d_name);
     if (dir->d_type == DT_DIR) {
       printf("Type: Directory\n");
-      char new_dir[128];
+      char new_dir[264];
       snprintf(new_dir, sizeof(new_dir), "%s/%s", directory, name);
       // TODO use SHA1_msg to create new directory (name is composed of all
       // files within tree (type, oid, name) then create directory and pass that
@@ -260,12 +276,15 @@ int handle_write_tree(char* directory) {
       handle_write_tree(new_dir);
     } else if (dir->d_type == DT_REG) {
       printf("Type: File\n");
-      char file[128];
+      char file[264];
       snprintf(file, sizeof(file), "%s/%s", directory, name);
-      if (str_suffix(file, ".o")) {
-        printf("Did not hash object\n");
-        continue;
+
+      for (size_t i = 0; i < num_ignored_dirents; ++i) {
+        if (str_equal(name, ignore_dirent[i])) {
+          continue;
+        }
       }
+
       handle_hash_object(file, "blob", 0);
     }
   }
