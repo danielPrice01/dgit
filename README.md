@@ -19,7 +19,7 @@ Simple clone of git.
 `
 ./dgit cat-file <filename>
 `
-- Searches for \<filename>\ (SHA1 hash) in .dgit/objects
+- Searches for \<filename> (SHA1 hash) in .dgit/objects
 - Prints contents of file to terminal
 
 `
