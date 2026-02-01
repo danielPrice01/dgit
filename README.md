@@ -7,7 +7,8 @@ Simple clone of git.
 `
 ./dgit init
 `
-- Creates .dgit directory with .objects
+- Creates .dgit directory containing:
+  - .objects
 
 `
 ./dgit hash-object <filename>
