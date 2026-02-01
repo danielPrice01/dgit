@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include "SHA1.h"
+#include "errno_print.h"
 #include "utils.h"
 
 /*************
@@ -39,6 +40,7 @@ int handle_init(void) {
   // create hidden directories, (mode 0777 -- rwx for everyone)
   if (mkdir(".dgit", 0777)) {
     fprintf(stderr, "Failed to create directory\n");
+    print_errno();
     return -1;
   }
 

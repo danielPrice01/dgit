@@ -1,0 +1,12 @@
+# build artifacts
+*.o
+*.d
+dgit 
+
+*.swp
+*.swo
+.DS_Store
+
+compile_commands.json
+
+.cache/
