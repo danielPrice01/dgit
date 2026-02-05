@@ -1,6 +1,6 @@
 Simple clone of git.
 
-Run `make` and use any of following commands:
+Run `make` and use any of the [supported commands](#Supported):
 
 ---
 
