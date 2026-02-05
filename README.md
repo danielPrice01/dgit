@@ -1,10 +1,9 @@
 Simple clone of git.
 
-Run `make` and use any of the [supported commands](#Supported):
-
+Run `make` and use any of the [supported commands](#supported-commands):
 ---
 
-### Supports:
+### Supported Commands:
 
 `
 ./dgit init
