@@ -1,6 +1,7 @@
 Simple clone of git.
 
 Run `make` and use any of the [supported commands](#supported-commands):
+
 ---
 
 ### Supported Commands:
