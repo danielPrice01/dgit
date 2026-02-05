@@ -4,7 +4,25 @@
 #include <stdio.h>
 #include "handler.h"
 
+/***********
+  TYPEDEFS
+ **********/
 typedef int (*cmd_fn)(int argc, char** argv);
+
+/***********
+  STRUCTS
+ **********/
+
+typedef struct {
+  const char* name;
+  int argc_required;
+  const char* usage;
+  cmd_fn fn;
+} command;
+
+/******************
+  STATIC FUNCTIONS
+ *****************/
 
 static int cmd_init(int argc, char** argv) {
   (void)argc;
@@ -26,13 +44,6 @@ static int cmd_write_tree(int argc, char** argv) {
   (void)argc;
   return handle_write_tree(argv[2]);
 }
-
-typedef struct {
-  const char* name;
-  int argc_required;
-  const char* usage;
-  cmd_fn fn;
-} command;
 
 static const command commands[] = {
     {"init", 2, "init", cmd_init},
