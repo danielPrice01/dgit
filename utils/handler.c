@@ -46,6 +46,7 @@ int handle_init(void) {
 
   if (mkdir(".dgit/objects", 0777)) {
     fprintf(stderr, "Failed to create directory\n");
+    print_errno();
     return -1;
   }
 
@@ -56,6 +57,7 @@ int handle_hash_object(char* path, char* file_type, int print_hash) {
   int fd = open(path, O_RDONLY);
   if (fd == -1) {
     fprintf(stderr, "Failed to open %s\n", path);
+    print_errno();
     return -1;
   }
 
@@ -64,6 +66,7 @@ int handle_hash_object(char* path, char* file_type, int print_hash) {
   off_t f_size;
   if (fstat(fd, &st) != 0) {
     fprintf(stderr, "Failed to parse %s size\n", path);
+    print_errno();
     close(fd);
     return -1;
   }
@@ -72,6 +75,7 @@ int handle_hash_object(char* path, char* file_type, int print_hash) {
   FILE* in = fdopen(fd, "rb");
   if (in == NULL) {
     fprintf(stderr, "Failed to open file\n");
+    print_errno();
     return -1;
   }
 
@@ -80,6 +84,7 @@ int handle_hash_object(char* path, char* file_type, int print_hash) {
   FILE* out = fopen("./.dgit/objects/tmp", "wb");
   if (out == NULL) {
     fprintf(stderr, "Failed to create file\n");
+    print_errno();
     fclose(in);
     return -1;
   }
@@ -95,6 +100,7 @@ int handle_hash_object(char* path, char* file_type, int print_hash) {
                             (long long)f_size, '\0');
   if (header_len < 0 || (size_t)header_len >= sizeof(header)) {
     fprintf(stderr, "Failed to create prefix\n");
+    print_errno();
     fclose(in);
     fclose(out);
     remove("./.dgit/objects/tmp");
@@ -119,6 +125,7 @@ int handle_hash_object(char* path, char* file_type, int print_hash) {
 
     if (fwrite(buf, 1, num_bytes, out) != num_bytes) {
       fprintf(stderr, "Failed to write object data\n");
+      print_errno();
       fclose(in);
       fclose(out);
       remove("./.dgit/objects/tmp");
@@ -128,6 +135,7 @@ int handle_hash_object(char* path, char* file_type, int print_hash) {
 
   if (ferror(in)) {
     fprintf(stderr, "Failed to read input file\n");
+    print_errno();
     fclose(in);
     fclose(out);
     remove("./.dgit/objects/tmp");
@@ -155,8 +163,10 @@ int handle_hash_object(char* path, char* file_type, int print_hash) {
   // rename file from tmp to SHA-1 hash
   if (rename(".dgit/objects/tmp", new_file_name) == -1) {
     fprintf(stderr, "Failed to rename %s\n", ".dgit/objects/tmp");
+    print_errno();
     if (remove(".dgit/objects/tmp") == -1) {
       fprintf(stderr, "Failed to delete %s\n", ".dgit/objects/tmp");
+      print_errno();
     }
     return -1;
   }
@@ -175,6 +185,7 @@ int handle_cat_file(char* path) {
   FILE* file = fopen(file_name, "rb");
   if (file == NULL) {
     fprintf(stderr, "Failed to open %s\n", file_name);
+    print_errno();
     return -1;
   }
 
@@ -190,6 +201,7 @@ int handle_cat_file(char* path) {
 
     if ((size_t)(idx + 1) >= sizeof(file_type)) {
       fprintf(stderr, "File type too large\n");
+      print_errno();
       fclose(file);
       return -1;
     }
@@ -199,6 +211,7 @@ int handle_cat_file(char* path) {
 
   if (c == EOF) {
     fprintf(stderr, "Invalid file type");
+    print_errno();
     fclose(file);
     return -1;
   }
@@ -208,6 +221,7 @@ int handle_cat_file(char* path) {
   // TODO support more types
   if (!str_equal(file_type, "blob")) {
     fprintf(stderr, "File type '%s' not supported\n", file_type);
+    print_errno();
     fclose(file);
     return -1;
   }
@@ -224,12 +238,14 @@ int handle_cat_file(char* path) {
 
   if (!found) {
     fprintf(stderr, "Header not found\n");
+    print_errno();
     fclose(file);
     return -1;
   }
 
   if (ferror(file)) {
     fprintf(stderr, "Error reading file\n");
+    print_errno();
     fclose(file);
     return -1;
   }
@@ -248,6 +264,7 @@ int handle_cat_file(char* path) {
 int handle_write_tree(char* directory) {
   if (strlen(directory) >= 128) {
     fprintf(stderr, "Directory name too large %s\n", directory);
+    print_errno();
     return -1;
   }
 
