@@ -72,13 +72,13 @@ void sha1_compress_block(u32 h[5], const u8 block[SHA1_BLOCK_SIZE]) {
 
   // the main 80-iter loop of SHA1 compression, follows FIPS 180-4
   for (size_t i = 0; i < 80; ++i) {
-    if (i <= 19) {
+    if (i < 20) {
       f = (b & c) | ((~b) & d);
       k = 0x5A827999U;  // floor(2^30 * sqrt(2))
-    } else if (i <= 39) {
+    } else if (i < 40) {
       f = b ^ c ^ d;
       k = 0x6ED9EBA1U;  // floor(2^30 * sqrt(3))
-    } else if (i <= 59) {
+    } else if (i < 60) {
       f = (b & c) | (b & d) | (c & d);
       k = 0x8F1BBCDCU;  // floor(2^30 * sqrt(5))
     } else {
@@ -106,7 +106,7 @@ void sha1_compress_block(u32 h[5], const u8 block[SHA1_BLOCK_SIZE]) {
 void sha1_final(sha1_context* context, u8 out[SHA1_DIGEST_SIZE]) {
   // convert length of total message passed to SHA1 algo into corresponding
   // 8-byte value
-  u64 bitlen = context->total_len * 8;
+  u64 bitlen = (u64)context->total_len * 8;
 
   // append SHA-1 padding, 1 bit followed by 0s
   context->buf[context->buf_len++] = 0x80;
@@ -144,6 +144,6 @@ void sha1_final(sha1_context* context, u8 out[SHA1_DIGEST_SIZE]) {
 void sha1_msg_to_hash(const char* msg, u8 out[SHA1_DIGEST_SIZE]) {
   sha1_context context;
   sha1_init(&context);
-  sha1_update(&context, (u8*)msg, strlen(msg));
+  sha1_update(&context, (const u8*)msg, strlen(msg));
   sha1_final(&context, out);
 }
