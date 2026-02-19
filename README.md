@@ -1,5 +1,9 @@
 Simple clone of git.
 
+Written in pure C, generally following a [tutorial by Nikita](https://www.leshenko.net/p/ugit/#)
+
+Does not rely on any external libraries.
+
 Run `make` and use any of the [supported commands](#supported-commands):
 
 ---
@@ -15,8 +19,8 @@ Run `make` and use any of the [supported commands](#supported-commands):
 `
 ./dgit hash-object <filename>
 `
-- Uses SHA1 algorithm to hash filename
-- Creates file with generated hash filename
+- Uses SHA1 algorithm to hash file contents
+- Creates file with generated hash file contents
 - Writes contents of <filename> to newly created file
 
 `
@@ -28,4 +32,4 @@ Run `make` and use any of the [supported commands](#supported-commands):
 `
 ./dgit write-tree
 `
-- Recursively adds all files and subdirectories to .dgit/objects
+- Recursively adds directory tree objects to .dgit/objects
