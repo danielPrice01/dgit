@@ -4,46 +4,15 @@
 #include <stddef.h>
 #include "typedefs.h"
 
-/***********
-  MACROS
- **********/
 #define SHA1_BLOCK_SIZE 64
 #define SHA1_DIGEST_SIZE 20
 
-/***********
-  STRUCTS
- **********/
 typedef struct {
-  u32 curr_hash[5];
-  u8 buf[SHA1_BLOCK_SIZE];
-  u64 total_len;
-  size_t buf_len;
+        u32 curr_hash[5];
+        u8 buf[SHA1_BLOCK_SIZE];
+        u64 total_len;
+        size_t buf_len;
 } sha1_context;
-
-/*****************
-  INLINE HELPERS
- ****************/
-
-static inline u32 rotate32(u32 x, unsigned bits) {
-  return ((x << bits) | (x >> (32 - bits)));
-}
-static inline u32 load_be32(const u8* x) {
-  return (((u32)x[0] << 24) | (((u32)x[1] << 16)) | (((u32)x[2] << 8)) |
-          ((u32)x[3]));
-}
-static inline void store_be32(u8* out, const u32* in) {
-  out[0] = (u8)(*in >> 24);
-  out[1] = (u8)(*in >> 16);
-  out[2] = (u8)(*in >> 8);
-  out[3] = (u8)(*in);
-}
-static inline size_t sha1_min(size_t block_size, size_t len) {
-  return (block_size < len) ? block_size : len;
-}
-
-/********************
-  PRIMARY FUNCTIONS
- *******************/
 
 // set initial values in context
 void sha1_init(sha1_context* context);

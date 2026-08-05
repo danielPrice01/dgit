@@ -1,0 +1,34 @@
+---
+Language: Cpp
+BasedOnStyle: Chromium
+
+IndentWidth: 8
+ContinuationIndentWidth: 8
+TabWidth: 8
+UseTab: Never
+
+DerivePointerAlignment: false
+PointerAlignment: Left
+
+ColumnLimit: 100
+
+AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+BreakBeforeBraces: Attach
+IndentCaseLabels: false
+
+SortIncludes: CaseSensitive
+IncludeBlocks: Preserve
+
+SpaceBeforeParens: ControlStatements
+SpacesInAngles: Never
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+
+Cpp11BracedListStyle: true
+BinPackArguments: true
+BinPackParameters: true
+...

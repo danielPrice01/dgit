@@ -1,16 +1,7 @@
 #ifndef HANDLER_H_
 #define HANDLER_H_
 
-#include <stdio.h>
-#include "typedefs.h"
-#include "utils.h"
-
-/***************************
-  PRIMARY FUNCTION HANDLERS
- **************************/
-
-// return -1 on failure, 0 on success
-int handle_init(void);
+int handle_init(void);  // return -1 on failure, 0 on success
 // note: this does not compress files or distribute across many directories for
 // sake of simplicity
 int handle_hash_object(char* path, char* file_type, int print_hash);

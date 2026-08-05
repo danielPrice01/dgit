@@ -1,38 +1,43 @@
-.PHONY: all debug release clean
-
 CC := gcc
-RM := rm -f
 
 TARGET := dgit
+TEST_TARGET := test_runner
 
-SRC_DIRS := src utils utils/SHA1
+SRC := $(wildcard src/*.c utils/*.c utils/SHA1/*.c)
+TEST_SRC := $(wildcard testing/*.c)
 
-SRCS := $(foreach d,$(SRC_DIRS),$(wildcard $(d)/*.c))
-OBJS := $(SRCS:.c=.o)
+OBJ := $(SRC:.c=.o)
+TEST_OBJ := $(filter-out src/cli.o,$(OBJ)) $(TEST_SRC:.c=.o)
+DEP := $(OBJ:.o=.d) $(TEST_SRC:.c=.d)
 
-CFLAGS_COMMON := -O2 -Wall -Wextra -pedantic -std=c11 -D_DEFAULT_SOURCE
-CFLAGS_COMMON += $(addprefix -I,$(SRC_DIRS))
-CFLAGS_COMMON += -MMD -MP 
+CPPFLAGS := -Isrc -Iutils -Iutils/SHA1 -D_DEFAULT_SOURCE
+CFLAGS := -std=c11 -Wall -Wextra -Wpedantic -MMD -MP
 
-CFLAGS_DEBUG := -g -Og
-CFLAGS_RELEASE := -O2 -DNDEBUG
+.PHONY: all debug release test clean
 
 all: debug
 
-debug: CFLAGS := $(CFLAGS_COMMON) $(CFLAGS_DEBUG)
+debug: CFLAGS += -g -Og
 debug: $(TARGET)
 
-release: CFLAGS := $(CFLAGS_COMMON) $(CFLAGS_RELEASE)
+release: CFLAGS += -O2 -DNDEBUG
 release: $(TARGET)
 
-$(TARGET): $(OBJS)
-	$(CC) -o $@ $^
+test: CFLAGS += -g -Og
+test: $(TEST_TARGET)
+	./$(TEST_TARGET)
+
+$(TARGET): $(OBJ)
+	$(CC) $^ -o $@
+
+$(TEST_TARGET): $(TEST_OBJ)
+	$(CC) $^ -o $@
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
--include $(OBJS:.o=.d)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 clean:
-	$(RM) $(TARGET) $(OBJS)
+	$(RM) $(TARGET) $(TEST_TARGET) $(OBJ) $(TEST_OBJ) $(DEP)
 	rm -rf .dgit
+
+-include $(DEP)
